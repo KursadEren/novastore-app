@@ -30,158 +30,35 @@ class AppColors {
   static const Color warning = Color(0xFFF59E0B);
 }
 
-enum ButtonType { primary, secondary, outline, text }
-
 class MyButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
-  final ButtonType type;
-  final bool isLoading;
-  final IconData? icon;
-  final double? width;
-  final double? height;
-  final Color? backgroundColor;
-  final Color? textColor;
 
   const MyButton({
     super.key,
     required this.text,
     this.onPressed,
-    this.type = ButtonType.primary,
-    this.isLoading = false,
-    this.icon,
-    this.width,
-    this.height,
-    this.backgroundColor,
-    this.textColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bool isDisabled = onPressed == null || isLoading;
-
-    Gradient? getGradient() {
-      if (type == ButtonType.primary && !isDisabled && backgroundColor == null) {
-        return const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.primaryDark,
-            AppColors.primary,
-          ],
-        );
-      }
-      return null;
-    }
-
-    Color getBackgroundColor() {
-      if (backgroundColor != null) return backgroundColor!;
-
-      switch (type) {
-        case ButtonType.primary:
-          return isDisabled
-              ? Colors.grey.shade300
-              : AppColors.primary;
-        case ButtonType.secondary:
-          return isDisabled
-              ? Colors.grey.shade200
-              : Colors.grey.shade100;
-        case ButtonType.outline:
-          return Colors.transparent;
-        case ButtonType.text:
-          return Colors.transparent;
-      }
-    }
-
-    Color getTextColor() {
-      if (textColor != null) return textColor!;
-
-      switch (type) {
-        case ButtonType.primary:
-          return Colors.white;
-        case ButtonType.secondary:
-          return AppColors.textPrimary;
-        case ButtonType.outline:
-          return AppColors.primary;
-        case ButtonType.text:
-          return AppColors.primary;
-      }
-    }
-
-    BorderSide? getBorder() {
-      if (type == ButtonType.outline) {
-        return BorderSide(
-          color: isDisabled ? Colors.grey.shade300 : AppColors.primary,
-          width: 1.5,
-        );
-      }
-      return null;
-    }
-
-    final gradient = getGradient();
-
     return SizedBox(
-      width: width ?? double.infinity,
-      height: height ?? 50,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(12),
-          border: getBorder() != null
-              ? Border.all(
-                  color: getBorder()!.color,
-                  width: getBorder()!.width,
-                )
-              : null,
-          color: gradient == null ? getBackgroundColor() : null,
-          boxShadow: type == ButtonType.primary && !isDisabled
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : null,
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: isDisabled ? null : onPressed,
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              child: isLoading
-                  ? Center(
-                      child: SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(getTextColor()),
-                        ),
-                      ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (icon != null) ...[
-                          Icon(icon, size: 20, color: getTextColor()),
-                          const SizedBox(width: 8),
-                        ],
-                        Text(
-                          text,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: getTextColor(),
-                          ),
-                        ),
-                      ],
-                    ),
-            ),
+          ),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
