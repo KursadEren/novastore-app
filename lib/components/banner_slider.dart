@@ -15,19 +15,19 @@ class _BannerSliderState extends State<BannerSlider> {
 
   final List<Map<String, String>> _banners = [
     {
-      'title': '🔥 Yaz İndirimi',
+      'title': 'Yaz İndirimi',
       'subtitle': 'Tüm ürünlerde %50\'ye varan indirim',
       'image': 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800',
       'color': 'blue',
     },
     {
-      'title': '🎁 Yeni Sezon',
+      'title': 'Yeni Sezon',
       'subtitle': 'En yeni ürünler şimdi burada',
       'image': 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800',
       'color': 'green',
     },
     {
-      'title': '⚡ Fırsat Ürünler',
+      'title': 'Fırsat Ürünler',
       'subtitle': 'Stoklar tükenene kadar özel fiyatlar',
       'image': 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800',
       'color': 'orange',
