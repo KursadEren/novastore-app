@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:novastore/components/my_button.dart';
 import 'package:novastore/components/product_card.dart';
+import 'package:novastore/components/banner_slider.dart';
 import 'package:novastore/models/product.dart';
 import 'package:novastore/services/product_service.dart';
 
@@ -94,25 +95,34 @@ class _HomeScreenState extends State<HomeScreen> {
                     ? Center(
                         child: Text('Ürün bulunamadı'),
                       )
-                    : Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: GridView.builder(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.7,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
+                    : Column(
+                        children: [
+                          SizedBox(height: 16),
+                          BannerSlider(),
+                          SizedBox(height: 16),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: GridView.builder(
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.7,
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 16,
+                                ),
+                                itemCount: products.length,
+                                itemBuilder: (context, index) {
+                                  return ProductCard(
+                                    product: products[index],
+                                    onTap: () {
+                                      debugPrint('Tapped: ${products[index].title}');
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
                           ),
-                          itemCount: products.length,
-                          itemBuilder: (context, index) {
-                            return ProductCard(
-                              product: products[index],
-                              onTap: () {
-                                debugPrint('Tapped: ${products[index].title}');
-                              },
-                            );
-                          },
-                        ),
+                        ],
                       ),
       ),
     );
