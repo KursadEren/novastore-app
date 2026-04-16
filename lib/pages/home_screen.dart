@@ -98,7 +98,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     : Column(
                         children: [
                           SizedBox(height: 16),
-                          BannerSlider(),
+                          SizedBox(
+                            height: 200,
+                            child: BannerSlider(),
+                          ),
                           SizedBox(height: 16),
                           Expanded(
                             child: Padding(
