@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:novastore/components/my_button.dart';
 import 'package:novastore/components/product_card.dart';
 import 'package:novastore/components/banner_slider.dart';
+import 'package:novastore/components/circle_category_banner.dart';
 import 'package:novastore/models/product.dart';
 import 'package:novastore/services/product_service.dart';
 
@@ -102,6 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 200,
                             child: BannerSlider(),
                           ),
+                          SizedBox(height: 16),
+                          CircleCategoryBanner(),
                           SizedBox(height: 16),
                           Expanded(
                             child: Padding(
