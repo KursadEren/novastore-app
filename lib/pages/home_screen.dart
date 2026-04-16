@@ -68,6 +68,20 @@ class _HomeScreenState extends State<HomeScreen> {
             debugPrint('Arama yapıldı: $value');
           },
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.mail_outline, color: Colors.white),
+            onPressed: () {
+              debugPrint('Mesajlar tıklandı');
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.notifications_outlined, color: Colors.white),
+            onPressed: () {
+              debugPrint('Bildirimler tıklandı');
+            },
+          ),
+        ],
         elevation: 0,
       ),
       body: SafeArea(
