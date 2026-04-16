@@ -5,7 +5,7 @@ import '../models/product.dart';
 
 class ProductService {
   // Base URL - .env dosyasından alınıyor
-  static String get baseUrl => dotenv.env['API_URL']!;
+  static String get baseUrl => dotenv.env['API_URL'] ?? 'https://dummyjson.com';
 
   // API endpoint
   static const String productsEndpoint = '/products';
@@ -35,16 +35,22 @@ class ProductService {
 
     try {
       final url = Uri.parse('$baseUrl$productsEndpoint');
+      print('API URL: $url'); // Debug
+
       final response = await client.get(url);
+      print('Status Code: ${response.statusCode}'); // Debug
+      print('Response Body: ${response.body.substring(0, 200)}...'); // Debug
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         _productResponse = ProductResponse.fromJson(jsonData);
         _products = _productResponse!.products;
+        print('Products loaded: ${_products.length}'); // Debug
       } else {
         _error = 'Ürünler yüklenemedi: ${response.statusCode}';
       }
     } catch (e) {
+      print('Error: $e'); // Debug
       _error = 'Bağlantı hatası: $e';
     } finally {
       _isLoading = false;

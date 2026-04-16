@@ -5,6 +5,7 @@ class Product {
   final String category;
   final double price;
   final double rating;
+  final String? image;
 
   Product({
     required this.id,
@@ -13,6 +14,7 @@ class Product {
     required this.category,
     required this.price,
     required this.rating,
+    this.image,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class Product {
       category: json['category'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
       rating: (json['rating'] ?? 0).toDouble(),
+      image: json['thumbnail'] ?? json['image'],
     );
   }
 
@@ -34,6 +37,7 @@ class Product {
       'category': category,
       'price': price,
       'rating': rating,
+      'image': image,
     };
   }
 }
