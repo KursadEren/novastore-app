@@ -6,7 +6,9 @@ import 'package:novastore/components/circle_category_banner.dart';
 import 'package:novastore/components/search_input.dart';
 import 'package:novastore/models/product.dart';
 import 'package:novastore/services/product_service.dart';
+import 'package:novastore/services/cart_service.dart';
 import 'package:novastore/pages/product_detail_screen.dart';
+import 'package:novastore/pages/cart_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ProductService _productService = ProductService();
+  final CartService _cartService = CartService();
   List<Product> products = [];
   bool isLoading = true;
   String? error;
@@ -33,19 +36,18 @@ class _HomeScreenState extends State<HomeScreen> {
       error = null;
     });
 
-    await _productService.fetchProducts();
-
-    setState(() {
-      products = _productService.products;
-      isLoading = _productService.isLoading;
-      error = _productService.error;
-    });
-  }
-
-  @override
-  void dispose() {
-    _productService.dispose();
-    super.dispose();
+    try {
+      final fetchedProducts = await _productService.fetchProducts();
+      setState(() {
+        products = fetchedProducts;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        error = 'Ürünler yüklenemedi: $e';
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -81,6 +83,47 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               debugPrint('Bildirimler tıklandı');
             },
+          ),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CartScreen(cartService: _cartService),
+                    ),
+                  ).then((_) => setState(() {}));
+                },
+              ),
+              if (_cartService.itemCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: BoxConstraints(
+                      minWidth: 18,
+                      minHeight: 18,
+                    ),
+                    child: Text(
+                      '${_cartService.itemCount}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
         elevation: 0,
@@ -150,9 +193,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         MaterialPageRoute(
                                           builder: (context) => ProductDetailScreen(
                                             product: products[index],
+                                            cartService: _cartService,
                                           ),
                                         ),
-                                      );
+                                      ).then((_) => setState(() {}));
                                     },
                                   );
                                 },

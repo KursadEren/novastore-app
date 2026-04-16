@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:novastore/pages/cart_screen.dart';
 import '../models/product.dart';
+import '../services/cart_service.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
-
+  final CartService cartService;
   const ProductDetailScreen({
     super.key,
     required this.product,
+    required this.cartService,
   });
 
   @override
@@ -184,11 +187,24 @@ class ProductDetailScreen extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  debugPrint('Sepete eklendi: ${product.title}');
+                  cartService.addToCart(product);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Ürün sepete eklendi!'),
+                      content: Text('${product.title} sepete eklendi!'),
                       duration: Duration(seconds: 2),
+                      action: SnackBarAction(
+                        label: 'Sepete Git',
+                        textColor: Colors.white,
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CartScreen(cartService: cartService ),
+                    ),
+                  );
+                        },
+                      ),
                     ),
                   );
                 },
