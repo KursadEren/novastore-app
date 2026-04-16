@@ -3,6 +3,7 @@ import 'package:novastore/components/my_button.dart';
 import 'package:novastore/components/product_card.dart';
 import 'package:novastore/components/banner_slider.dart';
 import 'package:novastore/components/circle_category_banner.dart';
+import 'package:novastore/components/search_input.dart';
 import 'package:novastore/models/product.dart';
 import 'package:novastore/services/product_service.dart';
 
@@ -52,12 +53,20 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: Text(
-          'NovaStore',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+        leading: IconButton(
+          icon: Icon(Icons.menu, color: Colors.white),
+          onPressed: () {
+            debugPrint('Menü açıldı');
+          },
+        ),
+        title: SearchInput(
+          hintText: 'Ürün ara...',
+          onChanged: (value) {
+            debugPrint('Arama: $value');
+          },
+          onSubmitted: (value) {
+            debugPrint('Arama yapıldı: $value');
+          },
         ),
         elevation: 0,
       ),
