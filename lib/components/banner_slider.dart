@@ -13,11 +13,39 @@ class _BannerSliderState extends State<BannerSlider> {
   int _currentPage = 0;
   Timer? _timer;
 
-  final List<Color> _colors = [
-    Colors.blue[300]!,
-    Colors.green[300]!,
-    Colors.orange[300]!,
+  final List<Map<String, String>> _banners = [
+    {
+      'title': '🔥 Yaz İndirimi',
+      'subtitle': 'Tüm ürünlerde %50\'ye varan indirim',
+      'image': 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800',
+      'color': 'blue',
+    },
+    {
+      'title': '🎁 Yeni Sezon',
+      'subtitle': 'En yeni ürünler şimdi burada',
+      'image': 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800',
+      'color': 'green',
+    },
+    {
+      'title': '⚡ Fırsat Ürünler',
+      'subtitle': 'Stoklar tükenene kadar özel fiyatlar',
+      'image': 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800',
+      'color': 'orange',
+    },
   ];
+
+  Color _getColor(String colorName) {
+    switch (colorName) {
+      case 'blue':
+        return Colors.blue;
+      case 'green':
+        return Colors.green;
+      case 'orange':
+        return Colors.orange;
+      default:
+        return Colors.blue;
+    }
+  }
 
   @override
   void initState() {
@@ -27,7 +55,7 @@ class _BannerSliderState extends State<BannerSlider> {
 
   void _startAutoSlide() {
     _timer = Timer.periodic(Duration(seconds: 3), (timer) {
-      if (_currentPage < 2) {
+      if (_currentPage < _banners.length - 1) {
         _currentPage++;
       } else {
         _currentPage = 0;
@@ -62,22 +90,69 @@ class _BannerSliderState extends State<BannerSlider> {
                   _currentPage = index;
                 });
               },
-              itemCount: 3,
+              itemCount: _banners.length,
               itemBuilder: (context, index) {
+                final banner = _banners[index];
                 return Container(
                   margin: EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: _colors[index],
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Center(
-                    child: Text(
-                      'Slider ${index + 1}',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // Arka plan resmi
+                        Image.network(
+                          banner['image']!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: _getColor(banner['color']!).withOpacity(0.3),
+                            );
+                          },
+                        ),
+                        // Gradient overlay
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.black.withOpacity(0.3),
+                                Colors.black.withOpacity(0.6),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // İçerik
+                        Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                banner['title']!,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                banner['subtitle']!,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -87,7 +162,7 @@ class _BannerSliderState extends State<BannerSlider> {
           SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(3, (index) {
+            children: List.generate(_banners.length, (index) {
               return Container(
                 width: 8,
                 height: 8,
