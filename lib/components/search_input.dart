@@ -46,7 +46,7 @@ class _SearchInputState extends State<SearchInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 42,
+      height: 38,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -86,7 +86,7 @@ class _SearchInputState extends State<SearchInput> {
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(
             horizontal: 12,
-            vertical: 10,
+            vertical: 8,
           ),
         ),
         style: TextStyle(

@@ -6,6 +6,7 @@ import 'package:novastore/components/circle_category_banner.dart';
 import 'package:novastore/components/search_input.dart';
 import 'package:novastore/models/product.dart';
 import 'package:novastore/services/product_service.dart';
+import 'package:novastore/pages/product_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -135,16 +136,23 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: GridView.builder(
                                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
-                                  childAspectRatio: 0.7,
-                                  crossAxisSpacing: 16,
-                                  mainAxisSpacing: 16,
+                                  childAspectRatio: 0.75,
+                                  crossAxisSpacing: 12,
+                                  mainAxisSpacing: 12,
                                 ),
                                 itemCount: products.length,
                                 itemBuilder: (context, index) {
                                   return ProductCard(
                                     product: products[index],
                                     onTap: () {
-                                      debugPrint('Tapped: ${products[index].title}');
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ProductDetailScreen(
+                                            product: products[index],
+                                          ),
+                                        ),
+                                      );
                                     },
                                   );
                                 },
