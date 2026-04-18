@@ -11,7 +11,9 @@ import 'package:novastore/pages/product_detail_screen.dart';
 import 'package:novastore/pages/cart_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final CartService? cartService;
+
+  const HomeScreen({super.key, this.cartService});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -19,7 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ProductService _productService = ProductService();
-  final CartService _cartService = CartService();
+  late final CartService _cartService;
   List<Product> products = [];
   bool isLoading = true;
   String? error;
@@ -27,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _cartService = widget.cartService ?? CartService();
     _loadProducts();
   }
 

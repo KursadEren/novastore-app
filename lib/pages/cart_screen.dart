@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/cart_service.dart';
 import '../models/cart_item.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   final CartService cartService;
 
   const CartScreen({
@@ -10,6 +10,11 @@ class CartScreen extends StatelessWidget {
     required this.cartService,
   });
 
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +30,7 @@ class CartScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          if (cartService.items.isNotEmpty)
+          if (widget.cartService.items.isNotEmpty)
             IconButton(
               icon: Icon(Icons.delete_outline, color: Colors.white),
               onPressed: () {
@@ -41,8 +46,11 @@ class CartScreen extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          cartService.clearCart();
+                          setState(() {
+                            widget.cartService.clearCart();
                           Navigator.pop(context);
+                          });
+                          
                         },
                         child: Text('Temizle', style: TextStyle(color: Colors.red)),
                       ),
@@ -54,7 +62,7 @@ class CartScreen extends StatelessWidget {
         ],
         elevation: 0,
       ),
-      body: cartService.items.isEmpty
+      body: widget.cartService.items.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -88,9 +96,9 @@ class CartScreen extends StatelessWidget {
                 Expanded(
                   child: ListView.builder(
                     padding: EdgeInsets.all(16),
-                    itemCount: cartService.items.length,
+                    itemCount: widget.cartService.items.length,
                     itemBuilder: (context, index) {
-                      final cartItem = cartService.items[index];
+                      final cartItem = widget.cartService.items[index];
                       return _buildCartItem(context, cartItem);
                     },
                   ),
@@ -184,12 +192,18 @@ class CartScreen extends StatelessWidget {
                               icon: Icon(Icons.remove, size: 18),
                               onPressed: () {
                                 if (cartItem.quantity > 1) {
-                                  cartService.updateQuantity(
+                                  setState(() {
+                                    widget.cartService.updateQuantity(
                                     cartItem.product.id,
                                     cartItem.quantity - 1,
                                   );
+                                  });
+                                  
                                 } else {
-                                  cartService.removeFromCart(cartItem.product.id);
+                                  setState(() {
+                                    widget.cartService.removeFromCart(cartItem.product.id);
+                                  });
+                                  
                                 }
                               },
                               padding: EdgeInsets.zero,
@@ -208,10 +222,13 @@ class CartScreen extends StatelessWidget {
                             IconButton(
                               icon: Icon(Icons.add, size: 18),
                               onPressed: () {
-                                cartService.updateQuantity(
+                                setState(() {
+                                  widget.cartService.updateQuantity(
                                   cartItem.product.id,
                                   cartItem.quantity + 1,
                                 );
+                                });
+                                
                               },
                               padding: EdgeInsets.zero,
                               constraints: BoxConstraints(
@@ -233,7 +250,10 @@ class CartScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.close, color: Colors.grey[600]),
             onPressed: () {
-              cartService.removeFromCart(cartItem.product.id);
+              setState(() {
+                 widget.cartService.removeFromCart(cartItem.product.id);
+              });
+             
             },
           ),
         ],
@@ -272,7 +292,7 @@ class CartScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    '\$${cartService.totalPrice.toStringAsFixed(2)}',
+                    '\$${widget.cartService.totalPrice.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,

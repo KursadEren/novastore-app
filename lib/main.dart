@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:novastore/components/my_button.dart';
-import 'package:novastore/pages/home_screen.dart';
+import 'package:novastore/components/bottom_bar.dart';
 
 Future<void> main() async {
   // .env dosyasını yükle
@@ -14,7 +13,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp
-    (home: HomeScreen(),);
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'NovaStore',
+      theme: ThemeData(
+        useMaterial3: true,
+      ),
+      home: const BottomBar(),
+    );
   }
 }
