@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:novastore/components/my_button.dart';
 import '../models/product.dart';
+import '../services/favorites_service.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback? onTap;
+  final FavoritesService? favoritesService;
 
   const ProductCard({
     super.key,
     required this.product,
     this.onTap,
+    this.favoritesService,
   });
 
   @override
@@ -36,12 +39,14 @@ class ProductCard extends StatelessWidget {
           children: [
             // Resim
             Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(12),
-                ),
-                child: product.image != null && product.image!.isNotEmpty
-                    ? Image.network(
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                    child: product.image != null && product.image!.isNotEmpty
+                        ? Image.network(
                         product.image!,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -68,6 +73,28 @@ class ProductCard extends StatelessWidget {
                           ),
                         ),
                       ),
+                  ),
+                  // Favori ikonu
+                  if (favoritesService != null)
+                    Positioned(
+                      top: 6,
+                      right: 6,
+                      child: GestureDetector(
+                        onTap: () {
+                          favoritesService!.toggleFavorite(product);
+                        },
+                        child: Icon(
+                          favoritesService!.isFavorite(product.id)
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: favoritesService!.isFavorite(product.id)
+                              ? Colors.red
+                              : Colors.black,
+                          size: 22,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             // Ürün bilgileri

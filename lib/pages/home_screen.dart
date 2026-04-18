@@ -8,13 +8,14 @@ import 'package:novastore/components/search_input.dart';
 import 'package:novastore/models/product.dart';
 import 'package:novastore/services/product_service.dart';
 import 'package:novastore/services/cart_service.dart';
+import 'package:novastore/services/favorites_service.dart';
 import 'package:novastore/pages/product_detail_screen.dart';
-import 'package:novastore/pages/cart_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final CartService? cartService;
+  final FavoritesService? favoritesService;
 
-  const HomeScreen({super.key, this.cartService});
+  const HomeScreen({super.key, this.cartService, this.favoritesService});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -22,16 +23,32 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ProductService _productService = ProductService();
-  late final CartService _cartService;
+  CartService? _cartService;
+  FavoritesService? _favoritesService;
   List<Product> products = [];
+  List<Product> filteredProducts = [];
+  List<String> categories = [];
   bool isLoading = true;
   String? error;
+  String? selectedCategory;
 
   @override
   void initState() {
     super.initState();
     _cartService = widget.cartService ?? CartService();
+    _favoritesService = widget.favoritesService ?? FavoritesService();
+    _favoritesService?.addListener(_onFavoritesChanged);
     _loadProducts();
+  }
+
+  @override
+  void dispose() {
+    _favoritesService?.removeListener(_onFavoritesChanged);
+    super.dispose();
+  }
+
+  void _onFavoritesChanged() {
+    setState(() {});
   }
 
   Future<void> _loadProducts() async {
@@ -42,8 +59,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       final fetchedProducts = await _productService.fetchProducts();
+
+      // Kategorileri çıkar
+      final categorySet = <String>{};
+      for (var product in fetchedProducts) {
+        categorySet.add(product.category);
+      }
+
+      final extractedCategories = categorySet.toList()..sort();
+      debugPrint('📦 Toplam ${fetchedProducts.length} ürün yüklendi');
+      debugPrint('🏷️ Kategoriler: $extractedCategories');
+
       setState(() {
         products = fetchedProducts;
+        filteredProducts = fetchedProducts;
+        categories = extractedCategories;
         isLoading = false;
       });
     } catch (e) {
@@ -52,6 +82,19 @@ class _HomeScreenState extends State<HomeScreen> {
         isLoading = false;
       });
     }
+  }
+
+  void _filterProducts(String? category) {
+    setState(() {
+      selectedCategory = category;
+      if (category == null) {
+        filteredProducts = products;
+      } else {
+        filteredProducts = products.where((product) {
+          return product.category.toLowerCase() == category.toLowerCase();
+        }).toList();
+      }
+    });
   }
 
   @override
@@ -80,9 +123,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Container(
             color: AppColors.primary,
             child: CategoryChips(
+              categories: categories,
               onCategorySelected: (category) {
-                debugPrint('Seçilen kategori: $category');
-                // TODO: Kategori filtreleme implementasyonu
+                _filterProducts(category);
               },
             ),
           ),
@@ -99,47 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               debugPrint('Bildirimler tıklandı');
             },
-          ),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CartScreen(cartService: _cartService),
-                    ),
-                  ).then((_) => setState(() {}));
-                },
-              ),
-              if (_cartService.itemCount > 0)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 18,
-                      minHeight: 18,
-                    ),
-                    child: Text(
-                      '${_cartService.itemCount}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-            ],
           ),
         ],
         elevation: 0,
@@ -175,9 +177,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   )
-                : products.isEmpty
-                    ? const Center(
-                        child: Text('Ürün bulunamadı'),
+                : filteredProducts.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 80,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              selectedCategory != null
+                                  ? 'Bu kategoride ürün bulunamadı'
+                                  : 'Ürün bulunamadı',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
                       )
                     : CustomScrollView(
                         slivers: [
@@ -191,7 +212,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 SizedBox(height: 10),
                                 CircleCategoryBanner(),
-                                SizedBox(height: 10),
+                                SizedBox(height: 16),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Size Özel Ürünler',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 12),
                               ],
                             ),
                           ),
@@ -207,21 +243,25 @@ class _HomeScreenState extends State<HomeScreen> {
                               delegate: SliverChildBuilderDelegate(
                                 (context, index) {
                                   return ProductCard(
-                                    product: products[index],
+                                    product: filteredProducts[index],
+                                    favoritesService: _favoritesService,
                                     onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ProductDetailScreen(
-                                            product: products[index],
-                                            cartService: _cartService,
+                                      if (_cartService != null) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ProductDetailScreen(
+                                              product: filteredProducts[index],
+                                              cartService: _cartService!,
+                                              favoritesService: _favoritesService,
+                                            ),
                                           ),
-                                        ),
-                                      ).then((_) => setState(() {}));
+                                        ).then((_) => setState(() {}));
+                                      }
                                     },
                                   );
                                 },
-                                childCount: products.length,
+                                childCount: filteredProducts.length,
                               ),
                             ),
                           ),

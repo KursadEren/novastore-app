@@ -5,6 +5,7 @@ import 'package:novastore/pages/favorites_screen.dart';
 import 'package:novastore/pages/cart_screen.dart';
 import 'package:novastore/pages/profile_screen.dart';
 import 'package:novastore/services/cart_service.dart';
+import 'package:novastore/services/favorites_service.dart';
 
 class BottomBar extends StatefulWidget {
   const BottomBar({super.key});
@@ -16,18 +17,32 @@ class BottomBar extends StatefulWidget {
 class _BottomBarState extends State<BottomBar> {
   int _currentIndex = 0;
   final CartService _cartService = CartService();
+  final FavoritesService _favoritesService = FavoritesService();
 
   late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
+    _favoritesService.addListener(_onServicesChanged);
+    _cartService.addListener(_onServicesChanged);
     _pages = [
-      HomeScreen(cartService: _cartService),
-      FavoritesScreen(cartService: _cartService),
+      HomeScreen(cartService: _cartService, favoritesService: _favoritesService),
+      FavoritesScreen(cartService: _cartService, favoritesService: _favoritesService),
       CartScreen(cartService: _cartService),
-      ProfileScreen(),
+      const ProfileScreen(),
     ];
+  }
+
+  @override
+  void dispose() {
+    _favoritesService.removeListener(_onServicesChanged);
+    _cartService.removeListener(_onServicesChanged);
+    super.dispose();
+  }
+
+  void _onServicesChanged() {
+    setState(() {});
   }
 
   @override
@@ -87,9 +102,39 @@ class _BottomBarState extends State<BottomBar> {
                 label: 'Ana Sayfa',
               ),
               BottomNavigationBarItem(
-                icon: const Padding(
-                  padding: EdgeInsets.only(bottom: 2),
-                  child: Icon(Icons.favorite_outline, size: 22),
+                icon: Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      const Icon(Icons.favorite_outline, size: 22),
+                      if (_favoritesService.favoriteCount > 0)
+                        Positioned(
+                          right: -5,
+                          top: -5,
+                          child: Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              '${_favoritesService.favoriteCount}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
                 activeIcon: Padding(
                   padding: const EdgeInsets.only(bottom: 2),
@@ -99,7 +144,37 @@ class _BottomBarState extends State<BottomBar> {
                       color: AppColors.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.favorite, size: 22),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        const Icon(Icons.favorite, size: 22),
+                        if (_favoritesService.favoriteCount > 0)
+                          Positioned(
+                            right: -5,
+                            top: -5,
+                            child: Container(
+                              padding: const EdgeInsets.all(3),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                '${_favoritesService.favoriteCount}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
                 label: 'Favoriler',

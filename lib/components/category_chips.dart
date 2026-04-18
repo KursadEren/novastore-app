@@ -3,8 +3,13 @@ import 'package:novastore/components/my_button.dart';
 
 class CategoryChips extends StatefulWidget {
   final Function(String?)? onCategorySelected;
+  final List<String>? categories;
 
-  const CategoryChips({super.key, this.onCategorySelected});
+  const CategoryChips({
+    super.key,
+    this.onCategorySelected,
+    this.categories,
+  });
 
   @override
   State<CategoryChips> createState() => _CategoryChipsState();
@@ -13,28 +18,20 @@ class CategoryChips extends StatefulWidget {
 class _CategoryChipsState extends State<CategoryChips> {
   String? selectedCategory;
 
-  final List<String> categories = [
-    'Tümü',
-    'Elektronik',
-    'Moda',
-    'Ev & Yaşam',
-    'Spor',
-    'Kozmetik',
-    'Kitap',
-    'Oyuncak',
-    'Gıda',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final allCategories = ['Tümü', ...(widget.categories ?? [])];
+
+    debugPrint('🔖 CategoryChips - Gösterilen kategoriler: $allCategories');
+
     return SizedBox(
       height: 45,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: categories.length,
+        itemCount: allCategories.length,
         itemBuilder: (context, index) {
-          final category = categories[index];
+          final category = allCategories[index];
           final isSelected = selectedCategory == category ||
                            (selectedCategory == null && category == 'Tümü');
 

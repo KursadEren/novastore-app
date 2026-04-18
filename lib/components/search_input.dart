@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:novastore/components/my_button.dart';
 
 class SearchInput extends StatefulWidget {
   final Function(String)? onChanged;
@@ -73,16 +74,35 @@ class _SearchInputState extends State<SearchInput> {
             color: Colors.grey[600],
             size: 20,
           ),
-          suffixIcon: _hasText
-              ? IconButton(
+          suffixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_hasText)
+                IconButton(
                   icon: Icon(
                     Icons.clear,
                     color: Colors.grey[600],
                     size: 18,
                   ),
                   onPressed: _clearText,
-                )
-              : null,
+                ),
+              Container(
+                margin: const EdgeInsets.only(right: 4),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.photo_camera_outlined,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    debugPrint('Görsel ile ara tıklandı');
+                    // TODO: Görsel arama özelliği
+                  },
+                  tooltip: 'Görsel ile ara',
+                ),
+              ),
+            ],
+          ),
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(
             horizontal: 12,

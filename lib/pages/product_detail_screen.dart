@@ -2,36 +2,64 @@ import 'package:flutter/material.dart';
 import 'package:novastore/pages/cart_screen.dart';
 import '../models/product.dart';
 import '../services/cart_service.dart';
+import '../services/favorites_service.dart';
 
-class ProductDetailScreen extends StatelessWidget {
+class ProductDetailScreen extends StatefulWidget {
   final Product product;
   final CartService cartService;
+  final FavoritesService? favoritesService;
+
   const ProductDetailScreen({
     super.key,
     required this.product,
     required this.cartService,
+    this.favoritesService,
   });
 
   @override
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+
+  @override
   Widget build(BuildContext context) {
+    final isFavorite = widget.favoritesService?.isFavorite(widget.product.id) ?? false;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
+          if (widget.favoritesService != null)
+            IconButton(
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: isFavorite ? Colors.red : Colors.black,
+              ),
+              onPressed: () {
+                setState(() {
+                  widget.favoritesService!.toggleFavorite(widget.product);
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      isFavorite
+                        ? 'Favorilerden çıkarıldı'
+                        : '❤️ Favorilere eklendi',
+                    ),
+                    duration: const Duration(seconds: 1),
+                  ),
+                );
+              },
+            ),
           IconButton(
-            icon: Icon(Icons.favorite_border, color: Colors.black),
-            onPressed: () {
-              debugPrint('Favorilere eklendi');
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.share, color: Colors.black),
+            icon: const Icon(Icons.share, color: Colors.black),
             onPressed: () {
               debugPrint('Paylaşıldı');
             },
@@ -47,9 +75,9 @@ class ProductDetailScreen extends StatelessWidget {
               height: 300,
               width: double.infinity,
               color: Colors.grey[100],
-              child: product.image != null && product.image!.isNotEmpty
+              child: widget.product.image != null && widget.product.image!.isNotEmpty
                   ? Image.network(
-                      product.image!,
+                      widget.product.image!,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
                         return Center(
@@ -84,7 +112,7 @@ class ProductDetailScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      product.category,
+                      widget.product.category,
                       style: TextStyle(
                         color: Colors.blue[700],
                         fontSize: 12,
@@ -96,7 +124,7 @@ class ProductDetailScreen extends StatelessWidget {
 
                   // Başlık
                   Text(
-                    product.title,
+                    widget.product.title,
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -111,7 +139,7 @@ class ProductDetailScreen extends StatelessWidget {
                       Icon(Icons.star, color: Colors.amber, size: 20),
                       SizedBox(width: 4),
                       Text(
-                        product.rating.toStringAsFixed(1),
+                        widget.product.rating.toStringAsFixed(1),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -119,7 +147,7 @@ class ProductDetailScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 4),
                       Text(
-                        '(${(product.rating * 100).toInt()} değerlendirme)',
+                        '(${(widget.product.rating * 100).toInt()} değerlendirme)',
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 14,
@@ -131,7 +159,7 @@ class ProductDetailScreen extends StatelessWidget {
 
                   // Fiyat
                   Text(
-                    '\$${product.price.toStringAsFixed(2)}',
+                    '\$${widget.product.price.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -153,7 +181,7 @@ class ProductDetailScreen extends StatelessWidget {
 
                   // Açıklama
                   Text(
-                    product.description,
+                    widget.product.description,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[700],
@@ -187,10 +215,10 @@ class ProductDetailScreen extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  cartService.addToCart(product);
+                  widget.cartService.addToCart(widget.product);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('${product.title} sepete eklendi!'),
+                      content: Text('${widget.product.title} sepete eklendi!'),
                       duration: Duration(seconds: 2),
                       action: SnackBarAction(
                         label: 'Sepete Git',
@@ -200,7 +228,7 @@ class ProductDetailScreen extends StatelessWidget {
                           Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CartScreen(cartService: cartService ),
+                      builder: (context) => CartScreen(cartService: widget.cartService),
                     ),
                   );
                         },
