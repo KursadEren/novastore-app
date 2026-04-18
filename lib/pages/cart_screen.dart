@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/cart_service.dart';
 import '../models/cart_item.dart';
+import 'checkout_screen.dart';
 
 class CartScreen extends StatefulWidget {
   final CartService cartService;
@@ -303,12 +304,14 @@ class _CartScreenState extends State<CartScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Ödeme sayfası yakında eklenecek!'),
-                      duration: Duration(seconds: 2),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CheckoutScreen(
+                        cartService: widget.cartService,
+                      ),
                     ),
-                  );
+                  ).then((_) => setState(() {}));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue[700],
