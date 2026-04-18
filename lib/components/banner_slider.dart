@@ -78,12 +78,9 @@ class _BannerSliderState extends State<BannerSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 180,
-      child: Column(
-        children: [
-          Expanded(
-            child: PageView.builder(
+      child: PageView.builder(
               controller: _pageController,
               onPageChanged: (index) {
                 setState(() {
@@ -93,14 +90,7 @@ class _BannerSliderState extends State<BannerSlider> {
               itemCount: _banners.length,
               itemBuilder: (context, index) {
                 final banner = _banners[index];
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Stack(
+                return Stack(
                       fit: StackFit.expand,
                       children: [
                         // Arka plan resmi
@@ -128,23 +118,23 @@ class _BannerSliderState extends State<BannerSlider> {
                         ),
                         // İçerik
                         Padding(
-                          padding: EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
                                 banner['title']!,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 24,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Text(
                                 banner['subtitle']!,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.white,
                                 ),
@@ -152,32 +142,33 @@ class _BannerSliderState extends State<BannerSlider> {
                             ],
                           ),
                         ),
+                        // Sayfa göstergesi - sağ alt köşe
+                        Positioned(
+                          bottom: 12,
+                          right: 12,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${index + 1}/${_banners.length}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
-                    ),
-                  ),
-                );
+                    );
               },
             ),
-          ),
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(_banners.length, (index) {
-              return Container(
-                width: 8,
-                height: 8,
-                margin: EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _currentPage == index
-                      ? Colors.blue
-                      : Colors.grey[400],
-                ),
-              );
-            }),
-          ),
-        ],
-      ),
     );
   }
 }

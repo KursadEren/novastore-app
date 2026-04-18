@@ -47,9 +47,7 @@ class _BottomBarState extends State<BottomBar> {
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          child: BottomNavigationBar(
+        child: BottomNavigationBar(
             currentIndex: _currentIndex,
             onTap: (index) {
               setState(() {
@@ -60,78 +58,78 @@ class _BottomBarState extends State<BottomBar> {
             backgroundColor: Colors.white,
             selectedItemColor: AppColors.primary,
             unselectedItemColor: AppColors.textSecondary,
-            selectedLabelStyle: TextStyle(
+            selectedLabelStyle: const TextStyle(
               fontWeight: FontWeight.w600,
-              fontSize: 12,
-            ),
-            unselectedLabelStyle: TextStyle(
-              fontWeight: FontWeight.w500,
               fontSize: 11,
+            ),
+            unselectedLabelStyle: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 10,
             ),
             elevation: 0,
             items: [
               BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.home_outlined, size: 26),
+                icon: const Padding(
+                  padding: EdgeInsets.only(bottom: 2),
+                  child: Icon(Icons.home_outlined, size: 22),
                 ),
                 activeIcon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
+                  padding: const EdgeInsets.only(bottom: 2),
                   child: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(Icons.home, size: 26),
+                    child: const Icon(Icons.home, size: 22),
                   ),
                 ),
                 label: 'Ana Sayfa',
               ),
               BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.favorite_outline, size: 26),
+                icon: const Padding(
+                  padding: EdgeInsets.only(bottom: 2),
+                  child: Icon(Icons.favorite_outline, size: 22),
                 ),
                 activeIcon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
+                  padding: const EdgeInsets.only(bottom: 2),
                   child: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(Icons.favorite, size: 26),
+                    child: const Icon(Icons.favorite, size: 22),
                   ),
                 ),
                 label: 'Favoriler',
               ),
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
+                  padding: const EdgeInsets.only(bottom: 2),
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      Icon(Icons.shopping_cart_outlined, size: 26),
+                      const Icon(Icons.shopping_cart_outlined, size: 22),
                       if (_cartService.itemCount > 0)
                         Positioned(
-                          right: -6,
-                          top: -6,
+                          right: -5,
+                          top: -5,
                           child: Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
+                            padding: const EdgeInsets.all(3),
+                            decoration: const BoxDecoration(
                               color: AppColors.error,
                               shape: BoxShape.circle,
                             ),
-                            constraints: BoxConstraints(
-                              minWidth: 18,
-                              minHeight: 18,
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
                             ),
                             child: Text(
                               '${_cartService.itemCount}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 9,
+                                fontSize: 8,
                                 fontWeight: FontWeight.bold,
                               ),
                               textAlign: TextAlign.center,
@@ -142,36 +140,36 @@ class _BottomBarState extends State<BottomBar> {
                   ),
                 ),
                 activeIcon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
+                  padding: const EdgeInsets.only(bottom: 2),
                   child: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        Icon(Icons.shopping_cart, size: 26),
+                        const Icon(Icons.shopping_cart, size: 22),
                         if (_cartService.itemCount > 0)
                           Positioned(
-                            right: -6,
-                            top: -6,
+                            right: -5,
+                            top: -5,
                             child: Container(
-                              padding: EdgeInsets.all(4),
-                              decoration: BoxDecoration(
+                              padding: const EdgeInsets.all(3),
+                              decoration: const BoxDecoration(
                                 color: AppColors.error,
                                 shape: BoxShape.circle,
                               ),
-                              constraints: BoxConstraints(
-                                minWidth: 18,
-                                minHeight: 18,
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
                               ),
                               child: Text(
                                 '${_cartService.itemCount}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 9,
+                                  fontSize: 8,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 textAlign: TextAlign.center,
@@ -185,19 +183,19 @@ class _BottomBarState extends State<BottomBar> {
                 label: 'Sepet',
               ),
               BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.person_outline, size: 26),
+                icon: const Padding(
+                  padding: EdgeInsets.only(bottom: 2),
+                  child: Icon(Icons.person_outline, size: 22),
                 ),
                 activeIcon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
+                  padding: const EdgeInsets.only(bottom: 2),
                   child: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(Icons.person, size: 26),
+                    child: const Icon(Icons.person, size: 22),
                   ),
                 ),
                 label: 'Profil',
@@ -205,7 +203,6 @@ class _BottomBarState extends State<BottomBar> {
             ],
           ),
         ),
-      ),
     );
   }
 }

@@ -29,7 +29,7 @@ class CircleCategoryBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 120,
+      height: 100,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 12),
@@ -43,8 +43,8 @@ class CircleCategoryBanner extends StatelessWidget {
               children: [
                 // Circle container with image
                 Container(
-                  width: 70,
-                  height: 70,
+                  width: 60,
+                  height: 60,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     boxShadow: [
@@ -86,17 +86,17 @@ class CircleCategoryBanner extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 6),
                 // Category title
                 SizedBox(
-                  width: 80,
+                  width: 70,
                   child: Text(
                     category['title']!,
                     textAlign: TextAlign.center,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: FontWeight.w500,
                       color: Colors.grey[800],
                     ),

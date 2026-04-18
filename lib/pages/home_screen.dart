@@ -3,6 +3,7 @@ import 'package:novastore/components/my_button.dart';
 import 'package:novastore/components/product_card.dart';
 import 'package:novastore/components/banner_slider.dart';
 import 'package:novastore/components/circle_category_banner.dart';
+import 'package:novastore/components/category_chips.dart';
 import 'package:novastore/components/search_input.dart';
 import 'package:novastore/models/product.dart';
 import 'package:novastore/services/product_service.dart';
@@ -60,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         leading: IconButton(
-          icon: Icon(Icons.menu, color: Colors.white),
+          icon: const Icon(Icons.menu, color: Colors.white),
           onPressed: () {
             debugPrint('Menü açıldı');
           },
@@ -74,15 +75,27 @@ class _HomeScreenState extends State<HomeScreen> {
             debugPrint('Arama yapıldı: $value');
           },
         ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Container(
+            color: AppColors.primary,
+            child: CategoryChips(
+              onCategorySelected: (category) {
+                debugPrint('Seçilen kategori: $category');
+                // TODO: Kategori filtreleme implementasyonu
+              },
+            ),
+          ),
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.mail_outline, color: Colors.white),
+            icon: const Icon(Icons.mail_outline, color: Colors.white),
             onPressed: () {
               debugPrint('Mesajlar tıklandı');
             },
           ),
           IconButton(
-            icon: Icon(Icons.notifications_outlined, color: Colors.white),
+            icon: const Icon(Icons.notifications_outlined, color: Colors.white),
             onPressed: () {
               debugPrint('Bildirimler tıklandı');
             },
@@ -91,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
             alignment: Alignment.center,
             children: [
               IconButton(
-                icon: Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -106,18 +119,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   right: 8,
                   top: 8,
                   child: Container(
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
                       color: Colors.red,
                       shape: BoxShape.circle,
                     ),
-                    constraints: BoxConstraints(
+                    constraints: const BoxConstraints(
                       minWidth: 18,
                       minHeight: 18,
                     ),
                     child: Text(
                       '${_cartService.itemCount}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
@@ -163,31 +176,36 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   )
                 : products.isEmpty
-                    ? Center(
+                    ? const Center(
                         child: Text('Ürün bulunamadı'),
                       )
-                    : Column(
-                        children: [
-                          SizedBox(height: 16),
-                          SizedBox(
-                            height: 200,
-                            child: BannerSlider(),
-                          ),
-                          SizedBox(height: 16),
-                          CircleCategoryBanner(),
-                          SizedBox(height: 16),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: GridView.builder(
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 0.75,
-                                  crossAxisSpacing: 12,
-                                  mainAxisSpacing: 12,
+                    : CustomScrollView(
+                        slivers: [
+                          const SliverToBoxAdapter(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 1),
+                                SizedBox(
+                                  height: 150,
+                                  child: BannerSlider(),
                                 ),
-                                itemCount: products.length,
-                                itemBuilder: (context, index) {
+                                SizedBox(height: 10),
+                                CircleCategoryBanner(),
+                                SizedBox(height: 10),
+                              ],
+                            ),
+                          ),
+                          SliverPadding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            sliver: SliverGrid(
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.75,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                              ),
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
                                   return ProductCard(
                                     product: products[index],
                                     onTap: () {
@@ -203,6 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                   );
                                 },
+                                childCount: products.length,
                               ),
                             ),
                           ),
