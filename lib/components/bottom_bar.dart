@@ -27,8 +27,16 @@ class _BottomBarState extends State<BottomBar> {
     _favoritesService.addListener(_onServicesChanged);
     _cartService.addListener(_onServicesChanged);
     _pages = [
-      HomeScreen(cartService: _cartService, favoritesService: _favoritesService),
-      FavoritesScreen(cartService: _cartService, favoritesService: _favoritesService),
+      HomeScreen(
+        cartService: _cartService,
+        favoritesService: _favoritesService,
+        onNavigateToCart: () => switchToTab(2),
+      ),
+      FavoritesScreen(
+        cartService: _cartService,
+        favoritesService: _favoritesService,
+        onNavigateToCart: () => switchToTab(2),
+      ),
       CartScreen(cartService: _cartService),
       const ProfileScreen(),
     ];
@@ -43,6 +51,12 @@ class _BottomBarState extends State<BottomBar> {
 
   void _onServicesChanged() {
     setState(() {});
+  }
+
+  void switchToTab(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
   @override

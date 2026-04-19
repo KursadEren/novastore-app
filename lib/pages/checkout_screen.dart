@@ -723,11 +723,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         actions: [
           TextButton(
             onPressed: () {
+              widget.cartService.clearCart();
+
+              // Önce SnackBar için context'i al
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
+
               Navigator.pop(context); // Dialog'u kapat
               Navigator.pop(context); // Checkout'u kapat
-              Navigator.pop(context); // Cart'ı kapat
-              widget.cartService.clearCart();
-              ScaffoldMessenger.of(context).showSnackBar(
+
+              // Pop'lardan sonra SnackBar göster
+              scaffoldMessenger.showSnackBar(
                 SnackBar(
                   content: Row(
                     children: [

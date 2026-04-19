@@ -14,8 +14,14 @@ import 'package:novastore/pages/product_detail_screen.dart';
 class HomeScreen extends StatefulWidget {
   final CartService? cartService;
   final FavoritesService? favoritesService;
+  final VoidCallback? onNavigateToCart;
 
-  const HomeScreen({super.key, this.cartService, this.favoritesService});
+  const HomeScreen({
+    super.key,
+    this.cartService,
+    this.favoritesService,
+    this.onNavigateToCart,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -31,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = true;
   String? error;
   String? selectedCategory;
+  String searchQuery = '';
 
   @override
   void initState() {
@@ -87,14 +94,32 @@ class _HomeScreenState extends State<HomeScreen> {
   void _filterProducts(String? category) {
     setState(() {
       selectedCategory = category;
-      if (category == null) {
-        filteredProducts = products;
-      } else {
-        filteredProducts = products.where((product) {
-          return product.category.toLowerCase() == category.toLowerCase();
-        }).toList();
-      }
+      _applyFilters();
     });
+  }
+
+  void _searchProducts(String query) {
+    setState(() {
+      searchQuery = query;
+      _applyFilters();
+    });
+  }
+
+  void _applyFilters() {
+    filteredProducts = products.where((product) {
+      // Kategori filtresi
+      final categoryMatch = selectedCategory == null ||
+          product.category.toLowerCase() == selectedCategory!.toLowerCase();
+
+      // Arama filtresi
+      final searchMatch = searchQuery.isEmpty ||
+          product.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          product.category.toLowerCase().contains(searchQuery.toLowerCase());
+
+      return categoryMatch && searchMatch;
+    }).toList();
+
+    debugPrint('🔍 Filtreleme: kategori=$selectedCategory, arama="$searchQuery", sonuç=${filteredProducts.length} ürün');
   }
 
   @override
@@ -112,10 +137,10 @@ class _HomeScreenState extends State<HomeScreen> {
         title: SearchInput(
           hintText: 'Ürün ara...',
           onChanged: (value) {
-            debugPrint('Arama: $value');
+            _searchProducts(value);
           },
           onSubmitted: (value) {
-            debugPrint('Arama yapıldı: $value');
+            _searchProducts(value);
           },
         ),
         bottom: PreferredSize(
@@ -254,6 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               product: filteredProducts[index],
                                               cartService: _cartService!,
                                               favoritesService: _favoritesService,
+                                              onNavigateToCart: widget.onNavigateToCart,
                                             ),
                                           ),
                                         ).then((_) => setState(() {}));

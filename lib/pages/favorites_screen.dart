@@ -8,11 +8,13 @@ import 'package:novastore/services/favorites_service.dart';
 class FavoritesScreen extends StatefulWidget {
   final CartService cartService;
   final FavoritesService favoritesService;
+  final VoidCallback? onNavigateToCart;
 
   const FavoritesScreen({
     super.key,
     required this.cartService,
     required this.favoritesService,
+    this.onNavigateToCart,
   });
 
   @override
@@ -79,6 +81,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               product: favorites[index],
                               cartService: widget.cartService,
                               favoritesService: widget.favoritesService,
+                              onNavigateToCart: widget.onNavigateToCart,
                             ),
                           ),
                         );

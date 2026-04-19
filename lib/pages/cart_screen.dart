@@ -17,6 +17,22 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   @override
+  void initState() {
+    super.initState();
+    widget.cartService.addListener(_onCartChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.cartService.removeListener(_onCartChanged);
+    super.dispose();
+  }
+
+  void _onCartChanged() {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -26,10 +42,7 @@ class _CartScreenState extends State<CartScreen> {
           'Sepetim',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
         actions: [
           if (widget.cartService.items.isNotEmpty)
             IconButton(
@@ -47,11 +60,8 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       TextButton(
                         onPressed: () {
-                          setState(() {
-                            widget.cartService.clearCart();
+                          widget.cartService.clearCart();
                           Navigator.pop(context);
-                          });
-                          
                         },
                         child: Text('Temizle', style: TextStyle(color: Colors.red)),
                       ),
@@ -193,18 +203,12 @@ class _CartScreenState extends State<CartScreen> {
                               icon: Icon(Icons.remove, size: 18),
                               onPressed: () {
                                 if (cartItem.quantity > 1) {
-                                  setState(() {
-                                    widget.cartService.updateQuantity(
+                                  widget.cartService.updateQuantity(
                                     cartItem.product.id,
                                     cartItem.quantity - 1,
                                   );
-                                  });
-                                  
                                 } else {
-                                  setState(() {
-                                    widget.cartService.removeFromCart(cartItem.product.id);
-                                  });
-                                  
+                                  widget.cartService.removeFromCart(cartItem.product.id);
                                 }
                               },
                               padding: EdgeInsets.zero,
@@ -223,13 +227,10 @@ class _CartScreenState extends State<CartScreen> {
                             IconButton(
                               icon: Icon(Icons.add, size: 18),
                               onPressed: () {
-                                setState(() {
-                                  widget.cartService.updateQuantity(
+                                widget.cartService.updateQuantity(
                                   cartItem.product.id,
                                   cartItem.quantity + 1,
                                 );
-                                });
-                                
                               },
                               padding: EdgeInsets.zero,
                               constraints: BoxConstraints(
@@ -251,10 +252,7 @@ class _CartScreenState extends State<CartScreen> {
           IconButton(
             icon: Icon(Icons.close, color: Colors.grey[600]),
             onPressed: () {
-              setState(() {
-                 widget.cartService.removeFromCart(cartItem.product.id);
-              });
-             
+              widget.cartService.removeFromCart(cartItem.product.id);
             },
           ),
         ],
@@ -311,7 +309,7 @@ class _CartScreenState extends State<CartScreen> {
                         cartService: widget.cartService,
                       ),
                     ),
-                  ).then((_) => setState(() {}));
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue[700],

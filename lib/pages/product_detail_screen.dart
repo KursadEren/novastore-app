@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:novastore/pages/cart_screen.dart';
 import '../models/product.dart';
 import '../services/cart_service.dart';
 import '../services/favorites_service.dart';
@@ -8,12 +7,14 @@ class ProductDetailScreen extends StatefulWidget {
   final Product product;
   final CartService cartService;
   final FavoritesService? favoritesService;
+  final VoidCallback? onNavigateToCart;
 
   const ProductDetailScreen({
     super.key,
     required this.product,
     required this.cartService,
     this.favoritesService,
+    this.onNavigateToCart,
   });
 
   @override
@@ -224,13 +225,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         label: 'Sepete Git',
                         textColor: Colors.white,
                         onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CartScreen(cartService: widget.cartService),
-                    ),
-                  );
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          }
+                          widget.onNavigateToCart?.call();
                         },
                       ),
                     ),
